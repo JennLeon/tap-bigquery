@@ -63,7 +63,7 @@ def _build_query(keys, filters=[], inclusive_start=True, limit=None):
 
 def do_discover(config, stream, output_schema_file=None,
                 add_timestamp=True):
-    client = bigquery.Client(credentials=config['credentials_path'])
+    client = bigquery.Client()
 
     start_datetime = dateutil.parser.parse(
         config.get("start_datetime")).strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -144,7 +144,7 @@ def do_sync(config, state, stream):
     singer.set_currently_syncing(state, stream.tap_stream_id)
     singer.write_state(state)
 
-    client = bigquery.Client(credentials=config['credentials_path'])
+    client = bigquery.Client()
     metadata = stream.metadata[0]["metadata"]
     tap_stream_id = stream.tap_stream_id
 

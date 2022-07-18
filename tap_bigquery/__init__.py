@@ -14,9 +14,7 @@ from singer.catalog import Catalog
 from . import sync_bigquery as source
 from . import utils
 
-
 REQUIRED_CONFIG_KEYS = ["streams", "start_datetime"]
-
 
 LOGGER = utils.get_logger(__name__)
 
@@ -51,8 +49,8 @@ def discover(config):
             'stream': stream["name"],
             'tap_stream_id': stream["name"],
             'schema': schema,
-            'metadata' : stream_metadata,
-            'key_properties': stream_key_properties
+            'metadata': stream_metadata,
+            'key_properties': stream_key_properties,
         }
         streams.append(catalog_entry)
 
@@ -133,6 +131,10 @@ def parse_args():
     parser.add_argument(
         "--end_datetime", type=str,
         help="Exclusive end date time in ISO8601-Date-String format: 2019-04-12T00:00:00Z")
+    parser.add_argument(
+        '--credentials_path', type=str,
+        help="Path for the google credentials"
+    )
 
     args = parser.parse_args()
     if args.config:
@@ -158,11 +160,11 @@ def main():
     args_dict = args.__dict__
     for arg in args_dict.keys():
         if arg in CONFIG.keys() and args_dict[arg] is None:
-           continue
+            continue
         CONFIG[arg] = args_dict[arg]
 
     if not CONFIG.get("end_datetime"):
-        CONFIG["end_datetime"]  = datetime.datetime.utcnow().isoformat()
+        CONFIG["end_datetime"] = datetime.datetime.utcnow().isoformat()
 
     singer_utils.check_config(CONFIG, REQUIRED_CONFIG_KEYS)
 
@@ -186,7 +188,6 @@ def main():
 CONFIG = {}
 for key in REQUIRED_CONFIG_KEYS:
     CONFIG[key] = None
-
 
 if __name__ == "__main__":
     main()
